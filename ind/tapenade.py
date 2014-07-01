@@ -441,7 +441,7 @@ all: $(FOBJS) $(COBJS)
         call_tapenade('forward', self.path, 'ffcn', ['x', 'p', 'u'], ['f'], 'xpu')
         change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_d_xpu_v.f'), ['f'], replace_nbdirxmax = True)
 
-        call_tapenade('reverse', self.path, 'ffcn', ['x', 'p', 'u'], ['f'], 'xpu')
+        call_tapenade('reverse', self.path, 'ffcn', ['x', 'p', 'u'], ['f', 'x', 'p', 'u'], 'xpu')
         change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_b_xpu.f'), ['f'], replace_nbdirxmax = True)
 
 
