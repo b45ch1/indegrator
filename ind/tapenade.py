@@ -5,8 +5,112 @@ import string
 import shutil
 import subprocess
 
-from vplan.utils import read_file, write_file, find_and_remove_lines
 
+import string, re, os, shutil
+
+def trim_trailing_whitespace(s):
+    t = ''
+    for line in s.splitlines():
+         t += line.rstrip() + os.linesep
+    return t
+
+def remove_exclamation_mark_comments(s):
+    """
+    removes comments of the type::
+
+        ``some code ! some comment``
+
+    """
+    # remove ! comments when followed by line continuation
+    s = re.sub(r"!.*", "", s)
+    s = trim_trailing_whitespace(s)
+    return s
+
+
+def do_fortran_line_continuation(s, max_cols = 72):
+    """
+    out = do_fortran_line_continuation(s, max_cols = 72)
+
+    Splits lines with more than max_cols = 72 characters.
+
+    Parameters:
+
+    :s: string,
+        Fortran code
+
+    Returns:
+
+    :out: string,
+        modified Fortran code
+
+    """
+
+    s = remove_exclamation_mark_comments(s)
+    lines = s.splitlines()
+    s = ""
+
+    for line in lines:
+        while len( line ) > max_cols and line[0] == ' ':
+           s += line[:max_cols] + os.linesep
+           line = "     *" + line[max_cols:]
+        s += line + os.linesep
+
+    return s
+
+def undo_fortran_line_continuation(s):
+    """
+
+    out = undo_fortran_line_continuation(s)
+
+    Write code spread over several lines into one line
+
+    Parameters:
+
+    :s: string,
+        Fortran code
+
+    Returns:
+
+    :out: string,
+        modified Fortran code
+
+    """
+    # return re.sub(r"(\r)?\n     [*+\S]", "", s)
+
+    return re.sub(r"(\r)?\n     [*+\S]", "", s)
+
+
+def find_and_remove_lines(text, search_string):
+    """
+
+    out = find_and_remove_lines(text, search_string)
+
+    Deletes all lines in `text` that contain `search_string`
+    """
+    s = ""
+    for row in text.splitlines():
+        if row.find(search_string) == -1:
+            s += row + os.linesep
+
+    return s
+
+def read_file(path, line_continuation = False):
+    f = open( path, "r" )
+    out = f.read()
+    f.close()
+
+    if line_continuation:
+        out = undo_fortran_line_continuation(out)
+
+    return out
+
+def write_file(path, s, line_continuation = False):
+    if line_continuation:
+        s = do_fortran_line_continuation(s)
+
+    f = open( path, "w" )
+    f.write(s)
+    f.close()
 
 
 
@@ -332,13 +436,28 @@ all: $(FOBJS) $(COBJS)
 
         print self.path
         print self.dir
+        self.clean()
 
         call_tapenade('forward', self.path, 'ffcn', ['x', 'p', 'u'], ['f'], 'xpu')
         change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_d_xpu_v.f'), ['f'], replace_nbdirxmax = True)
 
+        call_tapenade('reverse', self.path, 'ffcn', ['x', 'p', 'u'], ['f'], 'xpu')
+        change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_b_xpu.f'), ['f'], replace_nbdirxmax = True)
+
 
         self.make()
      
+
+    def clean(self):
+        files = glob.glob(os.path.join(self.dir, 'ffcn[^_]*'))
+        files +=  glob.glob(os.path.join(self.dir, '~'))
+        files +=  glob.glob(os.path.join(self.dir, '.bak'))
+        files +=  glob.glob(os.path.join(self.dir, 'libproblem.*'))
+        for f in files:
+            os.remove(f)
+
+        for f in glob.glob(os.path.join(self.dir, '*.o')): os.remove(f)
+
 
     def make(self):
 
