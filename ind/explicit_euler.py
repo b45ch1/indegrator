@@ -53,6 +53,26 @@ class ExplicitEuler(object):
         self.f   = numpy.zeros(self.NX)
         self.u   = numpy.zeros(self.NU)
 
+    def fo_check(self, ts, x0, x0_dot, p, p_dot, q, q_dot):
+        self.zo_check(ts, x0, p, q)
+
+        self.P = x0_dot.shape[0]
+
+        assert self.NP == p_dot.shape[1]
+
+        assert self.P == p_dot.shape[0]
+        assert self.P == q_dot.shape[0]
+
+        # assign variables
+        self.x0_dot = x0_dot
+        self.p_dot  = p_dot
+        self.q_dot  = q_dot
+
+        # allocate memory
+        self.xs_dot = numpy.zeros((self.M, self.P, self.NX))
+        self.f_dot  = numpy.zeros((self.P, self.NX))
+        self.u_dot  = numpy.zeros((self.P, self.NU))
+
 
     def zo_forward(self, ts, x0, p, q):
         self.zo_check(ts, x0, p, q)
@@ -66,5 +86,34 @@ class ExplicitEuler(object):
             self.lib.ffcn(self.ts[i:i+1], self.xs[i, :], self.f, self.p, self.u )
             self.xs[i + 1, :]  = self.xs[i,:] +  h*self.f
 
+
+
+    def fo_forward(self, ts, x0, x0_dot, p, p_dot, q, q_dot):
+        self.fo_check(ts, x0, x0_dot, p, p_dot, q, q_dot)
+
+        self.xs[0, :]         = x0
+        self.xs_dot[0, :, :]  = x0_dot
+
+
+        for i in range(self.M-1):
+            self.update_u_dot(i)
+            h = self.ts[i+1] - self.ts[i]
+
+            self.xs_dot[i + 1, :]  = self.xs_dot[i,:]
+
+            self.lib.ffcn_dot(self.ts[i:i+1],
+                              self.xs[i, :], self.xs_dot[i, :, :],
+                              self.f, self.f_dot,
+                              self.p, self.p_dot,
+                              self.u, self.u_dot)
+
+
+            self.xs_dot[i + 1, :, :]  += h*self.f_dot
+            self.xs[i + 1, :]  = self.xs[i,:] +  h*self.f
+
+
     def update_u(self, i):
         self.u[:] = self.q[:, i, 0]
+
+    def update_u_dot(self, i):
+        self.u_dot[:, :] = self.q_dot[:, :, i, 0]
