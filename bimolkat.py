@@ -1,7 +1,7 @@
 import numpy
-from ind.explicit_euler import ExplicitEuler
-from ind.tapenade import Differentiator
-from ind.ffi import libproblem
+from indegrator.explicit_euler import ExplicitEuler
+from indegrator.tapenade import Differentiator
+from indegrator.ffi import libproblem
 
 
 # d = Differentiator('./examples/bimolkat/ffcn.f')

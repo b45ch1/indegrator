@@ -58,7 +58,7 @@ class ExplicitEuler(object):
 
         self.P = x0_dot.shape[1]
 
-        assert self.NP == p_dot.shape[1]
+        assert self.NP == p_dot.shape[0]
 
         assert self.P == p_dot.shape[1]
         assert self.P == q_dot.shape[3]
@@ -112,7 +112,7 @@ class ExplicitEuler(object):
     def fo_reverse(self, xs_bar):
 
         numpy.set_printoptions(precision=None, threshold=None, edgeitems=None, linewidth=200, suppress=None, nanstr=None, infstr=None, formatter=None)
-        self.xs_bar = xs_bar
+        self.xs_bar = xs_bar.copy()
 
 
         self.x0_bar = numpy.zeros(self.x0.shape)

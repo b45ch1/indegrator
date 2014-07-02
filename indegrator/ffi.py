@@ -41,7 +41,7 @@ class libproblem(object):
 
     def ffcn_dot(self, t, x, x_dot, f, f_dot, p, p_dot, u, u_dot):
 
-        nbdirs = numpy.array([x_dot.shape[0]], dtype=numpy.int32)
+        nbdirs = numpy.array([x_dot.shape[1]], dtype=numpy.int32)
 
         ffi_t = ffi.cast("double *", t.ctypes.data)
         ffi_x = ffi.cast("double *", x.ctypes.data)
