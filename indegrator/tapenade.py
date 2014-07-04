@@ -173,6 +173,24 @@ def change_tapenade_forward_generated_code(s, retvals, replace_nbdirxmax = True)
 
         return keep
 
+    # all hints of the type
+    # C  Hint: ISIZE1OFmr_d_bINmess3_d_xp_v should be the value of nbdirs
+    results = re.findall('C  Hint: (\w+?) should be the value of (\w+)', s, re.IGNORECASE)
+    for result in results:
+        # remove hint
+        s = re.sub('C  Hint: %s should be the value of %s.*\n'%result, "", s)
+        # apply hint
+        s = re.sub( result[0], result[1], s)
+
+    # first all Hints concerning ISIZE20F
+    results = re.findall('C  Hint: ISIZE2OF(\w+?) should be the value of (\w+)', s, re.IGNORECASE)
+    for result in results:
+        # remove hint
+        s = re.sub('C  Hint: ISIZE2OF%s should be the value of %s.*\n'%result, "", s)
+        # apply hint
+        s = re.sub( 'ISIZE2OF' + result[0], result[1], s)
+
+
     # assume that the first element of retvals is the appropriate dimension
     # for the source transformation
 
@@ -438,11 +456,18 @@ all: $(FOBJS) $(COBJS)
         print self.dir
         self.clean()
 
+
+        # first order
         call_tapenade('forward', self.path, 'ffcn', ['x', 'p', 'u'], ['f'], 'xpu')
         change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_d_xpu_v.f'), ['f'], replace_nbdirxmax = True)
 
         call_tapenade('reverse', self.path, 'ffcn', ['x', 'p', 'u'], ['f', 'x', 'p', 'u'], 'xpu')
         change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_b_xpu.f'), ['f'], replace_nbdirxmax = True)
+
+        # second order
+        path2 = os.path.join(self.dir, 'ffcn_d_xpu_v.f')
+        call_tapenade('forward', path2, 'ffcn_d_xpu_v', ['x', 'x_d', 'p', 'p_d', 'u', 'u_d'], ['f', 'f_d'], 'xpu')
+        change_tapenade_forward_generated_files(os.path.join(self.dir, 'ffcn_d_xpu_v_d_xpu_v.f'), ['f'], replace_nbdirxmax = True)
 
 
         self.make()

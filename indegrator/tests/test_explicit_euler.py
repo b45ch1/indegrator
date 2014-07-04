@@ -30,7 +30,7 @@ class Test_ExplicitEuler(TestCase):
 
         p_dot[:, 0] = 1. 
 
-        e.fo_forward(ts, x0, x0_dot, p, p_dot, q, q_dot)
+        e.fo_forward_xpu(ts, x0, x0_dot, p, p_dot, q, q_dot)
 
         xs_bar = numpy.zeros(e.xs.shape)
         xs_bar[-1,1] = 1.
