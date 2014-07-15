@@ -4,7 +4,8 @@ INDegrator, an internal numerical differentiation (IND) library of differentiate
 
 Description:
 
-    INDegrator is a library of IND integration schemes. 
+    INDegrator is a library of IND integration schemes.
+
     They allow you to evaluate the solution ``y(t; y0, p, q)`` of initial value
     problem (IVP) of the form::
 
@@ -14,13 +15,15 @@ Description:
 
     where y_t denotes the derivative of ``y`` w.r.t. ``t``,
 
-    and additionally first- and second-order derivatives of the solution.
+    and additionally 
+
+    * first-order derivatives ``y_y0(t)``, ``y_p(t)``, ``y_q(t)``, 
+    * and second-order derivatives of the solution
+
+    in an accurate and efficient way.
 
     The derivatives w.r.t.``y0, p, q`` are computed based on the IND and automatic differentiation (AD)
-    principles. Hence, their computation is accurate (close to machine precision and efficient.
-
-    Both the forward and reverse/adjoint mode computations are supported.
-
+    principles. Both forward and reverse/adjoint mode computations are supported.
 
 Rationale:
 
@@ -60,6 +63,7 @@ Features:
 
     * Explicit Euler, fixed stepsize
      - first-order forward
+     - second-order forward
      - first-order reverse
 
 
