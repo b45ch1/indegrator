@@ -226,7 +226,7 @@ class ExplicitEuler(object):
             self.xs_bar[i + 1, :] = 0
             self.update_u_bar(i)
 
-        self.x0_bar[:] = self.xs_bar[0, :]
+        self.x0_bar[:] += self.xs_bar[0, :]
         self.xs_bar[0, :] = 0.
 
 
