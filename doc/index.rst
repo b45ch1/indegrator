@@ -10,16 +10,16 @@ Description
 
     INDegrator is a library of IND integration schemes.
 
-    They allow you to evaluate the solution :math:`y(t; y_0, p, q)` of initial value
+    They allow you to evaluate the solution :math:`x(t; x_0, p, q)` of initial value
     problems (IVP) of the form
 
 
     .. math::
 
-        y_t =& f(y, p, q) \\
-        y(0) =& y_0
+        x_t =& f(x, p, q) \\
+        x(0) =& x_0
 
-    where y_t denotes the derivative of ``y`` w.r.t. ``t``,
+    where x_t denotes the derivative of ``x`` w.r.t. ``t``,
 
     and additionally 
 
@@ -27,27 +27,27 @@ Description
 
       .. math::
 
-        \frac{\partial y}{\partial y_0}(t; y_0, p, q) \;, \\
-        \frac{\partial y}{\partial p}(t; y_0, p, q) \;, \\
-        \frac{\partial y}{\partial q}(t; y_0, p, q) 
+        \frac{\partial x}{\partial x_0}(t; x_0, p, q) \;, \\
+        \frac{\partial x}{\partial p}(t; x_0, p, q) \;, \\
+        \frac{\partial x}{\partial q}(t; x_0, p, q) 
 
     * and second-order derivatives of the solution
 
       .. math::
 
-        \frac{\partial^2 y}{\partial y_0^2}(t; y_0, p, q) \;, &
-        \frac{\partial^2 y}{\partial y_0 \partial p}(t; y_0, p, q) \\
-        \frac{\partial^2 y}{\partial y_0 \partial q}(t; y_0, p, q) \;, &
-        \frac{\partial^2 y}{\partial p^2}(t; y_0, p, q) \\
-        \frac{\partial^2 y}{\partial p \partial q}(t; y_0, p, q) \;, &
-        \frac{\partial^2 y}{\partial q^2}(t; y_0, p, q) 
+        \frac{\partial^2 x}{\partial x_0^2}(t; x_0, p, q) \;, &
+        \frac{\partial^2 x}{\partial x_0 \partial p}(t; x_0, p, q) \\
+        \frac{\partial^2 x}{\partial x_0 \partial q}(t; x_0, p, q) \;, &
+        \frac{\partial^2 x}{\partial p^2}(t; x_0, p, q) \\
+        \frac{\partial^2 x}{\partial p \partial q}(t; x_0, p, q) \;, &
+        \frac{\partial^2 x}{\partial q^2}(t; x_0, p, q) 
 
 
 
 
     in an accurate and efficient way.
 
-    The derivatives w.r.t. :math:`y_0`, :math:`p` and :math:`q` are computed based on the IND and automatic differentiation (AD)
+    The derivatives w.r.t. :math:`x_0`, :math:`p` and :math:`q` are computed based on the IND and automatic differentiation (AD)
     principles. Both forward and reverse/adjoint mode computations are supported.
 
 Rationale
@@ -86,7 +86,7 @@ Backend
 -------
 
     The integration algorithms are written in Python and repeatedly evaluate the rhs, i.e.,
-     ``f(y, p, q)`` and its derivatives ``df/d(y,p,q) (y, p, q)``,
+     ``f(x, p, q)`` and its derivatives ``df/d(x,p,q) (x, p, q)``,
 
     INDegrator currently only supports model functions are written in Fortran 77 and differentiates them
     using the AD tool Tapenade. This approach yields very efficient code.
@@ -107,7 +107,7 @@ Getting started
 Example 1: zero order forward
 `````````````````````````````
     
-    Compute trajectory :math:`y(t; y_0, p, q)`.
+    Compute trajectory :math:`x(t; x_0, p, q)`.
 
     .. literalinclude:: bimolkat_zo_forward.py
         :lines: 1-30
@@ -121,8 +121,8 @@ Example 1: zero order forward
 Example 2: zero order forward
 `````````````````````````````
 
-    Compute trajectory :math:`\frac{\partial y}{\partial p}(t; y_0, p, q)`
-    and :math:`\frac{\partial y}{\partial q}(t; y_0, p, q)`
+    Compute trajectory :math:`\frac{\partial x}{\partial p}(t; x_0, p, q)`
+    and :math:`\frac{\partial x}{\partial q}(t; x_0, p, q)`
 
     .. literalinclude:: bimolkat_fo_forward.py
 
@@ -139,13 +139,13 @@ Example 2: zero order forward
 Example 3: zero order forward
 `````````````````````````````
 
-    Compute the gradients of the state :math:`y(t=2; y_0, p, q)` w.r.t. :math:`y_0, p, q`, i.e.,
+    Compute the gradients of the state :math:`x(t=2; x_0, p, q)` w.r.t. :math:`x_0, p, q`, i.e.,
 
     .. math::
 
-        \nabla_{y_0} y(t=2; y_0, p, q) \;, \\
-        \nabla_{p} y(t=2; y_0, p, q) \;, \\
-        \nabla_{q} y(t=2; y_0, p, q) \;.
+        \nabla_{x_0} x(t=2; x_0, p, q) \;, \\
+        \nabla_{p} x(t=2; x_0, p, q) \;, \\
+        \nabla_{q} x(t=2; x_0, p, q) \;.
 
 
     .. literalinclude:: bimolkat_fo_reverse.py
