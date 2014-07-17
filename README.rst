@@ -1,7 +1,7 @@
 INDegrator, an internal numerical differentiation (IND) library of differentiated ODE solvers
 ---------------------------------------------------------------------------------------------
 
-See ... for documentation.
+See http://indegrator.readthedocs.org for documentation.
 
 
 Licence:
