@@ -20,9 +20,10 @@ q[1:, :, 0] = 1.
 
 rk4.zo_forward(ts, x0, p, q)
 from matplotlib import pyplot
-pyplot.figure()
+pyplot.figure(figsize=(3, 2))
 pyplot.plot(rk4.ts, rk4.xs)
 pyplot.xlabel('t')
+pyplot.tight_layout()
 pyplot.savefig('bimolkat_zo_forward.png')
 pyplot.show()
 

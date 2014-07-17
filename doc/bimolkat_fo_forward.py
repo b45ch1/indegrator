@@ -29,10 +29,11 @@ p_dot[:, :] = numpy.eye(P)
 rk4.fo_forward_xpu(ts, x0, x0_dot, p, p_dot, q, q_dot)
 
 from matplotlib import pyplot
-pyplot.figure()
+pyplot.figure(figsize=(3, 2))
 pyplot.title('d/dp x2(t)')
 pyplot.plot(rk4.ts, rk4.xs_dot[:,1,:])
 pyplot.xlabel('t')
+pyplot.tight_layout()
 pyplot.savefig('bimolkat_fo_forward_p.png')
 
 # =============================================
@@ -55,8 +56,9 @@ q_dot.reshape((P, P))[:, :] = numpy.eye(P)
 rk4.fo_forward_xpu(ts, x0, x0_dot, p, p_dot, q, q_dot)
 
 from matplotlib import pyplot
-pyplot.figure()
+pyplot.figure(figsize=(3, 2))
 pyplot.title('d/dq1 x2(t)')
 pyplot.plot(rk4.ts, rk4.xs_dot[:,1,:20])
+pyplot.tight_layout()
 pyplot.savefig('bimolkat_fo_forward_q.png')
 
