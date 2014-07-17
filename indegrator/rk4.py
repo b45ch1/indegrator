@@ -368,6 +368,18 @@ class RK4(object):
         numpy.set_printoptions(precision=None, threshold=None, edgeitems=None, linewidth=200, suppress=None, nanstr=None, infstr=None, formatter=None)
         self.xs_bar = xs_bar.copy()
 
+        t      = numpy.zeros(1)
+        K1     = numpy.zeros(self.f.shape) 
+        K2     = numpy.zeros(self.f.shape)
+        K3     = numpy.zeros(self.f.shape)
+        K4     = numpy.zeros(self.f.shape)
+        y      = numpy.zeros(self.f.shape)
+
+        K1_bar = numpy.zeros(self.f.shape) 
+        K2_bar = numpy.zeros(self.f.shape)
+        K3_bar = numpy.zeros(self.f.shape)
+        K4_bar = numpy.zeros(self.f.shape)
+        y_bar  = numpy.zeros(self.f.shape)
 
         self.x0_bar = numpy.zeros(self.x0.shape)
         self.f_bar  = numpy.zeros(self.f.shape)
@@ -375,23 +387,95 @@ class RK4(object):
         self.q_bar  = numpy.zeros(self.q.shape)
         self.u_bar  = numpy.zeros(self.u.shape)
 
+        ts = self.ts
+        p  = self.p
+        u  = self.u
+        xs = self.xs
+
+        p_bar = self.p_bar
+        u_bar = self.u_bar
+        xs_bar = self.xs_bar
+
         for i in range(self.M-1)[::-1]:
-            h = self.ts[i+1] - self.ts[i]
             self.update_u(i)
+            h = ts[i+1] - ts[i]
+            h2 = h/2.0
 
-            self.xs_bar[i,:] += self.xs_bar[i + 1, :]
+            # forward K1 = h*f[t, y, p, u]
+            t[0]  = ts[i]
+            y[:]  = xs[i, :]
+            self.lib.ffcn(t, y, K1, p, u)
+            K1   *= h
 
-            self.f_bar[:] = h*self.xs_bar[i+1, :]
-            self.lib.ffcn_bar(self.ts[i:i+1],
-                              self.xs[i, :], self.xs_bar[i,:],
-                              self.f, self.f_bar,
-                              self.p, self.p_bar,
-                              self.u, self.u_bar)
+            # forward K2 = h*f[t + h2, y + 0.5*K1, p, u]
+            t[0]  = ts[i] + h2
+            y[:]  = xs[i, :] + 0.5*K1
+            self.lib.ffcn(t, y, K2, p, u)
+            K2   *= h
 
-            self.xs_bar[i + 1, :] = 0
+            # forward K3 = h*f[t + h2, y + 0.5*K2, p, u]
+            t[0]  = ts[i] + h2
+            y[:]  = xs[i, :] + 0.5*K2
+            self.lib.ffcn(t, y, K3, p, u)
+            K3   *= h
+
+            # foward K4    = h*f(t + h, y + K3, p, u)
+            t[0]  = self.ts[i] + h
+            y[:]  = self.xs[i, :] + K3
+            self.lib.ffcn(t, y, K4, self.p, self.u )
+            K4   *= h
+
+            # forward accumulation
+            from numpy.testing import assert_almost_equal
+            assert_almost_equal(self.xs[i + 1, :],
+                                self.xs[i,:] +  (1./6.0)*(K1 + 2*K2 + 2*K3 + K4))
+
+
+            # reverse accumulation
+            y_bar[:]               = 0.
+            u_bar[:]               = 0.
+
+            self.xs_bar[i, :]     += self.xs_bar[i + 1, :]
+            K1_bar[:]              = (1./6.) * self.xs_bar[i + 1, :]
+            K2_bar[:]              = (2./6.) * self.xs_bar[i + 1, :]
+            K3_bar[:]              = (2./6.) * self.xs_bar[i + 1, :]
+            K4_bar[:]              = (1./6.) * self.xs_bar[i + 1, :]
+            xs_bar[i+1, :]         = 0.
+
+            # reverse K4 
+            K4_bar                *= h
+            self.lib.ffcn_bar(t, y, y_bar, K4, K4_bar, p, p_bar, u, u_bar)
+            xs_bar[i, :]          += y_bar
+            K3_bar                += y_bar
+            y_bar[:]               = 0.
+            t[0]                   = ts[i] + h
+
+            # reverse K3 
+            K3_bar                *= h
+            self.lib.ffcn_bar(t, y, y_bar, K3, K3_bar, p, p_bar, u, u_bar)
+            xs_bar[i, :]          += y_bar
+            K2_bar                += 0.5*y_bar
+            y_bar[:]               = 0.
+            t[0]                   = ts[i] + h2
+
+            # reverse K2
+            K2_bar                *= h
+            self.lib.ffcn_bar(t, y, y_bar, K2, K2_bar, p, p_bar, u, u_bar)
+            xs_bar[i, :]          += y_bar
+            K1_bar                += 0.5*y_bar
+            y_bar[:]               = 0.
+            t[0]                   = ts[i] + h2
+
+            # reverse K1
+            K1_bar                *= h
+            self.lib.ffcn_bar(t, y, y_bar, K1, K1_bar, p, p_bar, u, u_bar)
+            xs_bar[i, :]          += y_bar
+            y_bar[:]               = 0.
+            t[0]                   = ts[i]
+
             self.update_u_bar(i)
 
-        self.x0_bar[:] = self.xs_bar[0, :]
+        self.x0_bar[:] += self.xs_bar[0, :]
         self.xs_bar[0, :] = 0.
 
 
@@ -403,7 +487,7 @@ class RK4(object):
         self.u_dot[:, :] = self.q_dot[:, i, 0, :]
 
     def update_u_bar(self, i):
-        self.q_bar[:, i, 0] = self.u_bar[:]
+        self.q_bar[:, i, 0] += self.u_bar[:]
         self.u_bar[:] = 0.
 
     def update_u_ddot(self, i):
