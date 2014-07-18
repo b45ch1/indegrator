@@ -19,7 +19,7 @@ Description
         x_t =& f(x, p, q) \\
         x(0) =& x_0
 
-    where x_t denotes the derivative of ``x`` w.r.t. ``t``,
+    where :math:`x_t` denotes the derivative of :math:`x` w.r.t. :math:`t`,
 
     and additionally 
 
@@ -85,12 +85,14 @@ Known to work on
 Backend
 -------
 
-    The integration algorithms are written in Python and repeatedly evaluate the rhs, i.e.,
-     ``f(x, p, q)`` and its derivatives ``df/d(x,p,q) (x, p, q)``,
+    * Fortran 77
 
-    INDegrator currently only supports model functions are written in Fortran 77 and differentiates them
-    using the AD tool Tapenade. This approach yields very efficient code.
+      - the model function is differentiated using Tapenade
+      - the generated ``*.f`` files are compiled into ``libproblem.so``
+      - the Python module CFFI is used to call the Fortran functions
+      - Advantage: very fast execution of the model function and derivatives
 
+    * other backends are also possible
 
 Requirements
 ------------
@@ -104,7 +106,7 @@ Getting started
     
     
 
-Example 1: zero order forward
+Example 1: zero-order forward
 `````````````````````````````
     
     Compute trajectory :math:`x(t; x_0, p, q)`.
@@ -118,7 +120,7 @@ Example 1: zero order forward
 
 
 
-Example 2: zero order forward
+Example 2: first-order forward
 `````````````````````````````
 
     Compute trajectory :math:`\frac{\partial x}{\partial p}(t; x_0, p, q)`
@@ -136,8 +138,8 @@ Example 2: zero order forward
 
 
 
-Example 3: zero order forward
-`````````````````````````````
+Example 3: first-order reverse
+``````````````````````````````
 
     Compute the gradients of the state :math:`x(t=2; x_0, p, q)` w.r.t. :math:`x_0, p, q`, i.e.,
 
