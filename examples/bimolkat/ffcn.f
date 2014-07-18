@@ -1,5 +1,3 @@
-c     Rechte Seite der Differentialgleichungen
-
       subroutine ffcn( t, x, f, p, u)
         implicit none
 
@@ -14,7 +12,7 @@ c     Rechte Seite der Differentialgleichungen
         real*8 M1, M2, M3, M4
         real*8 dm
 
-c       Zustandsgroessen
+c       states
 
         n1   = x(1)
         n2   = x(2)
@@ -22,13 +20,13 @@ c       Zustandsgroessen
         n4   = x(4)
         Ckat = x(5)
 
-c       Konstanten
+c       constants
 
         na1 = 1.0
         na2 = 1.0
         na4 = 2.0
 
-c       Steuerfunktion
+c       control functions
 
         Tc         = u(1)
         Ckat_feed  = u(2)
@@ -36,7 +34,7 @@ c       Steuerfunktion
         b_feed     = u(4)
 
 
-c       Parameter
+c       parameters (nature-given)
 
         kr1 = p(1) * 1.0d-2
         E = p(2) * 60000.0d+0
@@ -44,7 +42,7 @@ c       Parameter
         Ekat = p(4) * 40000.0d0
         lambda = p(5) * 0.5d+0
 
-c       Molmassen (Einheit: kg/mol)
+c       molar masses (unit: kg/mol)
 
         M1 = 0.1362d+0
         M2 = 0.09806d+0
@@ -55,7 +53,7 @@ c       Molmassen (Einheit: kg/mol)
         Rg = 8.314d+0
         T1 = 293.0d+0
 
-c       Berechnung der Reaktionsraten
+c       computation of reaction rates
 
         mR = n1*M1 + n2*M2 +n3*M3 + n4*M4
 

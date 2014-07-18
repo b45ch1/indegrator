@@ -21,15 +21,15 @@ Description
 
     where :math:`x_t` denotes the derivative of :math:`x` w.r.t. :math:`t`,
 
-    and additionally 
+    and additionally
 
-    * first-order derivatives 
+    * first-order derivatives
 
       .. math::
 
         \frac{\partial x}{\partial x_0}(t; x_0, p, q) \;, \\
         \frac{\partial x}{\partial p}(t; x_0, p, q) \;, \\
-        \frac{\partial x}{\partial q}(t; x_0, p, q) 
+        \frac{\partial x}{\partial q}(t; x_0, p, q)
 
     * and second-order derivatives of the solution
 
@@ -40,7 +40,7 @@ Description
         \frac{\partial^2 x}{\partial x_0 \partial q}(t; x_0, p, q) \;, &
         \frac{\partial^2 x}{\partial p^2}(t; x_0, p, q) \\
         \frac{\partial^2 x}{\partial p \partial q}(t; x_0, p, q) \;, &
-        \frac{\partial^2 x}{\partial q^2}(t; x_0, p, q) 
+        \frac{\partial^2 x}{\partial q^2}(t; x_0, p, q)
 
 
 
@@ -103,13 +103,36 @@ Requirements
 
 Getting started
 ---------------
-    
-    
+
+
+We consider a chemical reaction kinetics example (Diels-Alder reaction).
+
+
+.. image:: http://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Original_Diels-Alder_reaction.png/640px-Original_Diels-Alder_reaction.png
+    :align: center
+    :scale: 100
+
+The parameters :math:`p` are nature-given and contain unknown quantities such as activation energies and reaction rate constants.
+The control functions 
+
+.. math::
+
+    u(t; q) 
+
+are parameterized by the control vector :math:`q`. (Currently only piecewise-linear continuous control functions are possible).
+
+The dynamics are described the the model equations ``ffcn.f``, i.e., the rhs of the ODE:
+
+.. literalinclude:: ../examples/bimolkat/ffcn.f
+   :language: fortran
+
+
 
 Example 1: zero-order forward
 `````````````````````````````
-    
-    Compute trajectory :math:`x(t; x_0, p, q)`.
+
+    Compute trajectory :math:`x(t; x_0, p, q)`, i.e., a simple forward evaluation.
+
 
     .. literalinclude:: bimolkat_zo_forward.py
         :lines: 1-30
@@ -121,7 +144,7 @@ Example 1: zero-order forward
 
 
 Example 2: first-order forward
-`````````````````````````````
+``````````````````````````````
 
     Compute trajectory :math:`\frac{\partial x}{\partial p}(t; x_0, p, q)`
     and :math:`\frac{\partial x}{\partial q}(t; x_0, p, q)`
@@ -154,13 +177,13 @@ Example 3: first-order reverse
 
     where one obtains the output::
 
-        gradient of x(t=2; x0, p, q) w.r.t. p  = 
+        gradient of x(t=2; x0, p, q) w.r.t. p  =
         [-0.05553826 -0.26378935 -0.18022685 -0.57068079  0.0912674 ]
-        gradient of x(t=2; x0, p, q) w.r.t. q  = 
+        gradient of x(t=2; x0, p, q) w.r.t. q  =
         [[[ -5.88595438e-08   0.00000000e+00]
           [ -5.93303903e-08   0.00000000e+00]
           [ -5.98124990e-08   0.00000000e+00]
-          ..., 
+          ...,
           [ -1.55170436e-04   0.00000000e+00]
           [ -1.57724384e-04   0.00000000e+00]
           [  0.00000000e+00   0.00000000e+00]]
@@ -168,7 +191,7 @@ Example 3: first-order reverse
          [[ -1.91875726e-04   0.00000000e+00]
           [ -1.92256884e-04   0.00000000e+00]
           [ -1.92638781e-04   0.00000000e+00]
-          ..., 
+          ...,
           [ -1.09278673e-05   0.00000000e+00]
           [ -3.67184216e-06   0.00000000e+00]
           [  0.00000000e+00   0.00000000e+00]]
@@ -176,7 +199,7 @@ Example 3: first-order reverse
          [[ -1.88832838e-03   0.00000000e+00]
           [ -1.88832379e-03   0.00000000e+00]
           [ -1.88831907e-03   0.00000000e+00]
-          ..., 
+          ...,
           [ -4.59399550e-05   0.00000000e+00]
           [ -1.54234950e-05   0.00000000e+00]
           [  0.00000000e+00   0.00000000e+00]]
@@ -184,11 +207,11 @@ Example 3: first-order reverse
          [[  2.08733332e-03   0.00000000e+00]
           [  2.08733821e-03   0.00000000e+00]
           [  2.08734323e-03   0.00000000e+00]
-          ..., 
+          ...,
           [  3.96132167e-03   0.00000000e+00]
           [  3.99233933e-03   0.00000000e+00]
           [  0.00000000e+00   0.00000000e+00]]]
-        gradient of x(t=2; x0, p, q) w.r.t. x0 = 
+        gradient of x(t=2; x0, p, q) w.r.t. x0 =
         [-0.47113849  0.52078906  0.04958182  0.0499501  -0.04782551]
 
 
