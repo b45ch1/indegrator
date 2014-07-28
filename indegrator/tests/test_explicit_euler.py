@@ -13,8 +13,8 @@ class Test_ExplicitEuler(TestCase):
 
     def test_forward_vs_reverse(self):
 
-        d = Differentiator(os.path.join(DIR, '../../examples/bimolkat/ffcn.f'))
-        e = ExplicitEuler(os.path.join(DIR, '../../examples/bimolkat/libproblem.so'))
+        d = Differentiator(os.path.join(DIR, '../../examples/fortran/bimolkat/ffcn.f'))
+        e = ExplicitEuler(os.path.join(DIR, '../../examples/fortran/bimolkat/libproblem.so'))
 
         ts          = numpy.linspace(0,2,50)
         x0          = numpy.ones(5)

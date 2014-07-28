@@ -27,7 +27,7 @@ ffi.cdef("""
 """)
 
 
-class libproblem(object):
+class BackendFortran(object):
 
     def __init__(self, path):
         self.path = os.path.abspath(path)

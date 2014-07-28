@@ -3,10 +3,12 @@ from indegrator.explicit_euler import ExplicitEuler
 from indegrator.rk4 import RK4
 
 from indegrator.tapenade import Differentiator
-from indegrator.ffi import libproblem
+from indegrator.backend_fortran import BackendFortran
 
-d = Differentiator('../examples/bimolkat/ffcn.f')
-rk4 = RK4('../examples/bimolkat/libproblem.so')
+d = Differentiator('../examples/fortran/bimolkat/ffcn.f')
+backend_fortran = BackendFortran('../examples/fortran/bimolkat/libproblem.so')
+rk4 = RK4(backend_fortran)
+
 
 ts          = numpy.linspace(0,2,500)
 x0          = numpy.ones(5)

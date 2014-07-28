@@ -10,12 +10,13 @@ import tempfile
 import scipy.linalg
 from numpy.testing import assert_almost_equal
 
-from . ffi import libproblem
+from . backend_fortran import BackendFortran
+from . backend_pyadolc import BackendPyadolc
 
 
 class ExplicitEuler(object):
 
-    def __init__(self, path_to_libproblem_so):
+    def __init__(self, backend):
 
         self.printlevel = 0
 
@@ -26,7 +27,7 @@ class ExplicitEuler(object):
         self.NU  = 0           # number of control functions
         self.NQI = 0           # number of q in one control interval
 
-        self.lib = libproblem(path_to_libproblem_so)
+        self.backend = backend
 
     def zo_check(self, ts, x0, p, q):
 
@@ -138,7 +139,7 @@ class ExplicitEuler(object):
             self.update_u(i)
             h = self.ts[i+1] - self.ts[i]
 
-            self.lib.ffcn(self.ts[i:i+1], self.xs[i, :], self.f, self.p, self.u )
+            self.backend.ffcn(self.ts[i:i+1], self.xs[i, :], self.f, self.p, self.u )
             self.xs[i + 1, :]  = self.xs[i,:] +  h*self.f
 
     def fo_forward_xpu(self, ts, x0, x0_dot, p, p_dot, q, q_dot):
@@ -154,7 +155,7 @@ class ExplicitEuler(object):
             self.xs_dot[i + 1, :, :]  = self.xs_dot[i,:, :]
             self.xs[i + 1, :]         = self.xs[i, :]
 
-            self.lib.ffcn_dot(self.ts[i:i+1],
+            self.backend.ffcn_dot(self.ts[i:i+1],
                               self.xs[i, :], self.xs_dot[i, :, :],
                               self.f, self.f_dot,
                               self.p, self.p_dot,
@@ -186,7 +187,7 @@ class ExplicitEuler(object):
             self.xs_dot2[i + 1, :, :]     = self.xs_dot2[i, :, :]
             self.xs[i + 1, :]             = self.xs[i, :]
 
-            self.lib.ffcn_ddot(self.ts[i:i+1],
+            self.backend.ffcn_ddot(self.ts[i:i+1],
                               self.xs[i, :], self.xs_dot1[i, :, :], self.xs_dot2[i, :, :], self.xs_ddot[i, :, :, :],
                               self.f, self.f_dot1, self.f_dot2, self.f_ddot,
                               self.p, self.p_dot1, self.p_dot2, self.p_ddot,
@@ -217,7 +218,7 @@ class ExplicitEuler(object):
             self.xs_bar[i,:] += self.xs_bar[i + 1, :]
 
             self.f_bar[:] = h*self.xs_bar[i+1, :]
-            self.lib.ffcn_bar(self.ts[i:i+1],
+            self.backend.ffcn_bar(self.ts[i:i+1],
                               self.xs[i, :], self.xs_bar[i,:],
                               self.f, self.f_bar,
                               self.p, self.p_bar,

@@ -15,7 +15,7 @@ from . ffi import libproblem
 
 class RK4(object):
 
-    def __init__(self, path_to_libproblem_so):
+    def __init__(self, backend):
 
         self.printlevel = 0
 
@@ -26,7 +26,7 @@ class RK4(object):
         self.NU  = 0           # number of control functions
         self.NQI = 0           # number of q in one control interval
 
-        self.lib = libproblem(path_to_libproblem_so)
+        self.backend = backend
 
     def zo_check(self, ts, x0, p, q):
 
@@ -150,25 +150,25 @@ class RK4(object):
             # K1    = h*f(t, y, p, u)
             t[0]  = self.ts[i]
             y[:]  = self.xs[i, :]
-            self.lib.ffcn(t, y, K1, self.p, self.u )
+            self.backend.ffcn(t, y, K1, self.p, self.u )
             K1   *= h
 
             # K2    = h*f(t + h2, y + 0.5*K1, p, u)
             t[0]  = self.ts[i] + h2
             y[:]  = self.xs[i, :] + 0.5*K1
-            self.lib.ffcn(t, y, K2, self.p, self.u )
+            self.backend.ffcn(t, y, K2, self.p, self.u )
             K2   *= h
 
             # K3    = h*f(t + h2, y + 0.5*K2, p, u)
             t[0]  = self.ts[i] + h2
             y[:]  = self.xs[i, :] + 0.5*K2
-            self.lib.ffcn(t, y, K3, self.p, self.u )
+            self.backend.ffcn(t, y, K3, self.p, self.u )
             K3   *= h
 
             # K4    = h*f(t + h, y + K3, p, u)
             t[0]  = self.ts[i] + h
             y[:]  = self.xs[i, :] + K3
-            self.lib.ffcn(t, y, K4, self.p, self.u )
+            self.backend.ffcn(t, y, K4, self.p, self.u )
             K4   *= h
 
             self.xs[i + 1, :]  = self.xs[i,:] +  (1./6.0)*(K1 + 2*K2 + 2*K3 + K4)
@@ -201,7 +201,7 @@ class RK4(object):
             t[0]      = self.ts[i]
             y[:]      = self.xs[i, :]
             y_dot[:]  = self.xs_dot[i, :]
-            self.lib.ffcn_dot(t, y, y_dot,
+            self.backend.ffcn_dot(t, y, y_dot,
                                 K1, K1_dot,
                                 self.p, self.p_dot,
                                 self.u, self.u_dot )
@@ -212,7 +212,7 @@ class RK4(object):
             t[0]      = self.ts[i] + h2
             y[:]      = self.xs[i, :] + 0.5*K1
             y_dot[:]  = self.xs_dot[i, :] + 0.5*K1_dot
-            self.lib.ffcn_dot(t, y, y_dot,
+            self.backend.ffcn_dot(t, y, y_dot,
                             K2, K2_dot,
                             self.p, self.p_dot,
                             self.u, self.u_dot )
@@ -223,7 +223,7 @@ class RK4(object):
             t[0]      = self.ts[i] + h2
             y[:]      = self.xs[i, :] + 0.5*K2
             y_dot[:]  = self.xs_dot[i, :] + 0.5*K2_dot
-            self.lib.ffcn_dot(t, y, y_dot,
+            self.backend.ffcn_dot(t, y, y_dot,
                             K3, K3_dot,
                             self.p, self.p_dot,
                             self.u, self.u_dot )
@@ -235,7 +235,7 @@ class RK4(object):
             t[0]      = self.ts[i] + h
             y[:]      = self.xs[i, :] + K3
             y_dot[:]  = self.xs_dot[i, :] + K3_dot
-            self.lib.ffcn_dot(t, y, y_dot,
+            self.backend.ffcn_dot(t, y, y_dot,
                             K4, K4_dot,
                             self.p, self.p_dot,
                             self.u, self.u_dot )
@@ -298,7 +298,7 @@ class RK4(object):
             y_dot1[:]  = self.xs_dot1[i, :]
             y_dot2[:]  = self.xs_dot2[i, :]
             y_ddot[:]  = self.xs_ddot[i, :]
-            self.lib.ffcn_ddot(t,
+            self.backend.ffcn_ddot(t,
                               y, y_dot1, y_dot2, y_ddot,
                               K1, K1_dot1, K1_dot2, K1_ddot,
                               self.p, self.p_dot1, self.p_dot2, self.p_ddot,
@@ -314,7 +314,7 @@ class RK4(object):
             y_dot1[:]  = self.xs_dot1[i, :] + 0.5 * K1_dot1 
             y_dot2[:]  = self.xs_dot2[i, :] + 0.5 * K1_dot2
             y_ddot[:]  = self.xs_ddot[i, :] + 0.5 * K1_ddot
-            self.lib.ffcn_ddot(t,
+            self.backend.ffcn_ddot(t,
                               y, y_dot1, y_dot2, y_ddot,
                               K2, K2_dot1, K2_dot2, K2_ddot,
                               self.p, self.p_dot1, self.p_dot2, self.p_ddot,
@@ -330,7 +330,7 @@ class RK4(object):
             y_dot1[:]  = self.xs_dot1[i, :] + 0.5 * K2_dot1 
             y_dot2[:]  = self.xs_dot2[i, :] + 0.5 * K2_dot2
             y_ddot[:]  = self.xs_ddot[i, :] + 0.5 * K2_ddot
-            self.lib.ffcn_ddot(t,
+            self.backend.ffcn_ddot(t,
                               y, y_dot1, y_dot2, y_ddot,
                               K3, K3_dot1, K3_dot2, K3_ddot,
                               self.p, self.p_dot1, self.p_dot2, self.p_ddot,
@@ -347,7 +347,7 @@ class RK4(object):
             y_dot1[:]  = self.xs_dot1[i, :] + K3_dot1 
             y_dot2[:]  = self.xs_dot2[i, :] + K3_dot2
             y_ddot[:]  = self.xs_ddot[i, :] + K3_ddot
-            self.lib.ffcn_ddot(t,
+            self.backend.ffcn_ddot(t,
                               y, y_dot1, y_dot2, y_ddot,
                               K4, K4_dot1, K4_dot2, K4_ddot,
                               self.p, self.p_dot1, self.p_dot2, self.p_ddot,
@@ -405,25 +405,25 @@ class RK4(object):
             # forward K1 = h*f[t, y, p, u]
             t[0]  = ts[i]
             y[:]  = xs[i, :]
-            self.lib.ffcn(t, y, K1, p, u)
+            self.backend.ffcn(t, y, K1, p, u)
             K1   *= h
 
             # forward K2 = h*f[t + h2, y + 0.5*K1, p, u]
             t[0]  = ts[i] + h2
             y[:]  = xs[i, :] + 0.5*K1
-            self.lib.ffcn(t, y, K2, p, u)
+            self.backend.ffcn(t, y, K2, p, u)
             K2   *= h
 
             # forward K3 = h*f[t + h2, y + 0.5*K2, p, u]
             t[0]  = ts[i] + h2
             y[:]  = xs[i, :] + 0.5*K2
-            self.lib.ffcn(t, y, K3, p, u)
+            self.backend.ffcn(t, y, K3, p, u)
             K3   *= h
 
             # foward K4    = h*f(t + h, y + K3, p, u)
             t[0]  = self.ts[i] + h
             y[:]  = self.xs[i, :] + K3
-            self.lib.ffcn(t, y, K4, self.p, self.u )
+            self.backend.ffcn(t, y, K4, self.p, self.u )
             K4   *= h
 
             # forward accumulation
@@ -446,7 +446,7 @@ class RK4(object):
             t[0]                   = ts[i] + h
             K4_bar                *= h
             y[:]                   = self.xs[i, :] + K3
-            self.lib.ffcn_bar(t, y, y_bar, K4, K4_bar, p, p_bar, u, u_bar)
+            self.backend.ffcn_bar(t, y, y_bar, K4, K4_bar, p, p_bar, u, u_bar)
             xs_bar[i, :]          += y_bar
             K3_bar                += y_bar
             y_bar[:]               = 0.
@@ -455,7 +455,7 @@ class RK4(object):
             t[0]                   = ts[i] + h2
             K3_bar                *= h
             y[:]                   = self.xs[i, :] + 0.5*K2
-            self.lib.ffcn_bar(t, y, y_bar, K3, K3_bar, p, p_bar, u, u_bar)
+            self.backend.ffcn_bar(t, y, y_bar, K3, K3_bar, p, p_bar, u, u_bar)
             xs_bar[i, :]          += y_bar
             K2_bar                += 0.5*y_bar
             y_bar[:]               = 0.
@@ -464,7 +464,7 @@ class RK4(object):
             t[0]                   = ts[i] + h2
             K2_bar                *= h
             y[:]  = xs[i, :] + 0.5*K1
-            self.lib.ffcn_bar(t, y, y_bar, K2, K2_bar, p, p_bar, u, u_bar)
+            self.backend.ffcn_bar(t, y, y_bar, K2, K2_bar, p, p_bar, u, u_bar)
             xs_bar[i, :]          += y_bar
             K1_bar                += 0.5*y_bar
             y_bar[:]               = 0.
@@ -473,7 +473,7 @@ class RK4(object):
             t[0]                   = ts[i]
             K1_bar                *= h
             y[:]                   = self.xs[i, :]
-            self.lib.ffcn_bar(t, y, y_bar, K1, K1_bar, p, p_bar, u, u_bar)
+            self.backend.ffcn_bar(t, y, y_bar, K1, K1_bar, p, p_bar, u, u_bar)
             xs_bar[i, :]          += y_bar
             y_bar[:]               = 0.
 
