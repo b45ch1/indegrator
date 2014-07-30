@@ -115,9 +115,9 @@ class Test_ExplicitEuler(TestCase):
         q_ddot       = numpy.zeros(q.shape + (P1, P2))
 
         ef.so_forward_xpu_xpu(ts,
-                              x0, x0_dot1, x0_dot2, x0_ddot,
-                              p, p_dot1, p_dot2, p_ddot,
-                              q, q_dot1, q_dot2, q_ddot)
+                              x0, x0_dot2, x0_dot1, x0_ddot,
+                              p, p_dot2, p_dot1, p_ddot,
+                              q, q_dot2, q_dot1, q_ddot)
 
         xs_fortran = ef.xs.copy()
         xs_dot1_fortran = ef.xs_dot1.copy()
@@ -126,9 +126,9 @@ class Test_ExplicitEuler(TestCase):
 
 
         ep.so_forward_xpu_xpu(ts,
-                              x0, x0_dot1, x0_dot2, x0_ddot,
-                              p, p_dot1, p_dot2, p_ddot,
-                              q, q_dot1, q_dot2, q_ddot)
+                              x0, x0_dot2, x0_dot1, x0_ddot,
+                              p, p_dot2, p_dot1, p_ddot,
+                              q, q_dot2, q_dot1, q_ddot)
 
 
         xs_pyadolc = ep.xs.copy()

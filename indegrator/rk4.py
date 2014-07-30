@@ -299,10 +299,10 @@ class RK4(object):
             y_dot2[:]  = self.xs_dot2[i, :]
             y_ddot[:]  = self.xs_ddot[i, :]
             self.backend.ffcn_ddot(t,
-                              y, y_dot1, y_dot2, y_ddot,
-                              K1, K1_dot1, K1_dot2, K1_ddot,
-                              self.p, self.p_dot1, self.p_dot2, self.p_ddot,
-                              self.u, self.u_dot1, self.u_dot2, self.u_ddot)
+                              y, y_dot2, y_dot1, y_ddot,
+                              K1, K1_dot2, K1_dot1, K1_ddot,
+                              self.p, self.p_dot2, self.p_dot1, self.p_ddot,
+                              self.u, self.u_dot2, self.u_dot1, self.u_ddot)
             K1        *= h
             K1_dot1   *= h
             K1_dot2   *= h
@@ -315,10 +315,10 @@ class RK4(object):
             y_dot2[:]  = self.xs_dot2[i, :] + 0.5 * K1_dot2
             y_ddot[:]  = self.xs_ddot[i, :] + 0.5 * K1_ddot
             self.backend.ffcn_ddot(t,
-                              y, y_dot1, y_dot2, y_ddot,
-                              K2, K2_dot1, K2_dot2, K2_ddot,
-                              self.p, self.p_dot1, self.p_dot2, self.p_ddot,
-                              self.u, self.u_dot1, self.u_dot2, self.u_ddot)
+                              y, y_dot2, y_dot1, y_ddot,
+                              K2, K2_dot2, K2_dot1, K2_ddot,
+                              self.p, self.p_dot2, self.p_dot1, self.p_ddot,
+                              self.u, self.u_dot2, self.u_dot1, self.u_ddot)
             K2        *= h
             K2_dot1   *= h
             K2_dot2   *= h
@@ -331,10 +331,10 @@ class RK4(object):
             y_dot2[:]  = self.xs_dot2[i, :] + 0.5 * K2_dot2
             y_ddot[:]  = self.xs_ddot[i, :] + 0.5 * K2_ddot
             self.backend.ffcn_ddot(t,
-                              y, y_dot1, y_dot2, y_ddot,
-                              K3, K3_dot1, K3_dot2, K3_ddot,
-                              self.p, self.p_dot1, self.p_dot2, self.p_ddot,
-                              self.u, self.u_dot1, self.u_dot2, self.u_ddot)
+                              y, y_dot2, y_dot1, y_ddot,
+                              K3, K3_dot2, K3_dot1, K3_ddot,
+                              self.p, self.p_dot2, self.p_dot1, self.p_ddot,
+                              self.u, self.u_dot2, self.u_dot1, self.u_ddot)
             K3        *= h
             K3_dot1   *= h
             K3_dot2   *= h
@@ -348,10 +348,10 @@ class RK4(object):
             y_dot2[:]  = self.xs_dot2[i, :] + K3_dot2
             y_ddot[:]  = self.xs_ddot[i, :] + K3_ddot
             self.backend.ffcn_ddot(t,
-                              y, y_dot1, y_dot2, y_ddot,
-                              K4, K4_dot1, K4_dot2, K4_ddot,
-                              self.p, self.p_dot1, self.p_dot2, self.p_ddot,
-                              self.u, self.u_dot1, self.u_dot2, self.u_ddot)
+                              y, y_dot2, y_dot1, y_ddot,
+                              K4, K4_dot2, K4_dot1, K4_ddot,
+                              self.p, self.p_dot2, self.p_dot1, self.p_ddot,
+                              self.u, self.u_dot2, self.u_dot1, self.u_ddot)
             K4        *= h
             K4_dot1   *= h
             K4_dot2   *= h

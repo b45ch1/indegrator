@@ -426,7 +426,7 @@ class Differentiator(object):
 '''
 
 LIB        = so
-OPT        = -O0 -g
+OPT        = -O3 
 MAKELIB    = g++ -shared -o
 COMPILE_C  = gcc      -c -o $@ $(OPT) -fPIC
 COMPILE_F  = gfortran -c -o $@ $(OPT) -fPIC -fno-second-underscore -frecursive -finit-local-zero -fdefault-real-8 -fdefault-double-8

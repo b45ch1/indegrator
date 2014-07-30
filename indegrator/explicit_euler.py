@@ -188,10 +188,10 @@ class ExplicitEuler(object):
             self.xs[i + 1, :]             = self.xs[i, :]
 
             self.backend.ffcn_ddot(self.ts[i:i+1],
-                              self.xs[i, :], self.xs_dot1[i, :, :], self.xs_dot2[i, :, :], self.xs_ddot[i, :, :, :],
-                              self.f, self.f_dot1, self.f_dot2, self.f_ddot,
-                              self.p, self.p_dot1, self.p_dot2, self.p_ddot,
-                              self.u, self.u_dot1, self.u_dot2, self.u_ddot)
+                              self.xs[i, :], self.xs_dot2[i, :, :], self.xs_dot1[i, :, :], self.xs_ddot[i, :, :, :],
+                              self.f, self.f_dot2, self.f_dot1, self.f_ddot,
+                              self.p, self.p_dot2, self.p_dot1, self.p_ddot,
+                              self.u, self.u_dot2, self.u_dot1, self.u_ddot)
 
             self.xs_ddot[i + 1, :, :, :]  += h*self.f_ddot
             self.xs_dot1[i + 1, :, :]     += h*self.f_dot1
