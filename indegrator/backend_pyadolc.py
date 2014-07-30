@@ -94,4 +94,47 @@ class BackendPyadolc(object):
                   f, f_dot2, f_dot1, f_ddot,
                   p, p_dot2, p_dot1, p_ddot,
                   u, u_dot2, u_dot1, u_ddot):
-        raise NotImplementedError("")
+
+        if self.traced == False:
+            dims = {'x': x.size, 'p': p.size, 'u': u.size}
+            self.trace(dims)
+
+        N = t.size + x.size + p.size + u.size
+
+        M = x_dot1.shape[1]
+        L = x_dot2.shape[1]
+
+        v   = numpy.zeros(N) 
+        V1  = numpy.zeros((N, x_dot1.shape[1]))
+        V2  = numpy.zeros((N, x_dot2.shape[1]))
+        V12 = numpy.zeros((N, x_ddot.shape[1], x_ddot.shape[2]))
+        V   = numpy.zeros((N, M + L + M*L, 2))
+
+        v[1:1+x.size]                       = x
+        v[1+x.size:1+x.size+p.size]         = p
+        v[1+x.size+p.size:]                 = u
+
+        V1[1:1+x.size, :]                   = x_dot1
+        V1[1+x.size:1+x.size+p.size, :]     = p_dot1
+        V1[1+x.size+p.size:, :]             = u_dot1
+
+        V2[1:1+x.size, :]                   = x_dot2
+        V2[1+x.size:1+x.size+p.size, :]     = p_dot2
+        V2[1+x.size+p.size:, :]             = u_dot2
+
+        V12[1:1+x.size, :, :]               = x_ddot
+        V12[1+x.size:1+x.size+p.size, :, :] = p_ddot
+        V12[1+x.size+p.size:, :, :]         = u_ddot
+
+        adolc.interpolation.entangle_cross(V, V1, V2, V12)
+        w, W = adolc.hov_forward(123, v, V)
+
+        U1  = numpy.zeros((x.size, V1.shape[1]))
+        U2  = numpy.zeros((x.size, V2.shape[1]))
+        U12 = numpy.zeros((x.size, M, L))
+
+        f[:] = w
+        adolc.interpolation.detangle_cross(W, U1, U2, U12)
+        f_dot1[:, :] = U1
+        f_dot2[:, :] = U2
+        f_ddot[:, :, :] = U12

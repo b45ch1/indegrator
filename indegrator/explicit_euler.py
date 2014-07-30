@@ -167,7 +167,7 @@ class ExplicitEuler(object):
     def so_forward_xpu_xpu(self, ts, x0, x0_dot2, x0_dot1, x0_ddot,
                                      p,   p_dot2,  p_dot1, p_ddot,
                                      q,   q_dot2,  q_dot1, q_ddot):
-        
+
         self.so_check(ts,
                  x0, x0_dot2, x0_dot1, x0_ddot,
                  p,   p_dot2,  p_dot1, p_ddot,
