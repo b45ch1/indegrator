@@ -5,17 +5,33 @@ import adolc
 
 class BackendPyadolc(object):
 
-    def __init__(self, path):
-        self.path = os.path.abspath(path)
-        self.dir  = os.path.dirname(self.path)
+    def __init__(self, ffcn):
+        """
+        is ffcn either
+
+        1)  a callable  of the form ``def ffcn(t, x, f, p, u)``
+        2) or a path to a directory containing a file ffcn.py
+
+        """
+
+
+        if hasattr(ffcn, '__call__'):
+            self.ffcn = ffcn
+        else:
+            self.path = os.path.abspath(ffcn)
+            self.dir  = os.path.dirname(self.path)
+            
+            sys.path.insert(0, self.dir)
+            import ffcn
+
+            self.ffcn = ffcn.ffcn
+
+
         self.traced = False
 
 
     def trace(self, dims):
         # trace function
-        sys.path.insert(0, self.dir)
-        import ffcn
-
         t = numpy.zeros(1)
         x = numpy.zeros(dims['x'])
         f = numpy.zeros(dims['x'])
@@ -33,7 +49,7 @@ class BackendPyadolc(object):
         adolc.independent(ax)
         adolc.independent(ap)
         adolc.independent(au)
-        ffcn.ffcn(t, ax, af, ap, au)
+        self.ffcn(t, ax, af, ap, au)
         adolc.dependent(af)
         adolc.trace_off()
         self.traced = True

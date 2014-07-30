@@ -5,7 +5,7 @@ import numpy
 from indegrator.explicit_euler import ExplicitEuler
 from indegrator.rk4 import RK4 
 
-from indegrator.tapenade import Differentiator 
+from indegrator.backend_pyadolc import BackendPyadolc
 
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,8 +15,8 @@ class Test_RK4(TestCase):
 
     def test_forward_vs_reverse(self):
 
-        d = Differentiator(os.path.join(DIR, '../../examples/fortran/bimolkat/ffcn.f'))
-        e = RK4(os.path.join(DIR, '../../examples/fortran/bimolkat/libproblem.so'))
+        backend_pyadolc = BackendPyadolc(os.path.join(DIR, '../../examples/python/bimolkat/ffcn.py'))
+        e = RK4(backend_pyadolc)
 
         ts          = numpy.linspace(0,2,50)
         x0          = numpy.ones(5)
