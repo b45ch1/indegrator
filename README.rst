@@ -14,7 +14,7 @@ Licence:
     * In addition, "Neither the name of the contributors' organizations" was changed to "Neither the names of the contributors' organizations"
 
 
-Copyright (c) 2014 Seastian F. Walter
+Copyright (c) 2014 Sebastian F. Walter
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
