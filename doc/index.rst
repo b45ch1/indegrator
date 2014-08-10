@@ -4,6 +4,22 @@
 INDegrator, an internal numerical differentiation (IND) library of differentiated ODE solvers
 =============================================================================================
 
+Installation
+------------
+
+
+Dependencies Core:
+
+    * numpy
+
+Dependencies Backends:
+
+    * For Python model functions: install ``pyadolc`` (https://github.com/b45ch1/pyadolc)
+    * For Fortran model functions: install ``Tapenade`` >= 3.6 (http://www-sop.inria.fr/tropics/tapenade.html)
+
+
+Get the repository from https://github.com/b45ch1/indegrator .
+Add the path to indegrator to your PYTHONPATH.
 
 Description
 -----------
@@ -92,13 +108,9 @@ Backend
       - the Python module CFFI is used to call the Fortran functions
       - Advantage: very fast execution of the model function and derivatives
 
-    * other backends are also possible
+    * Python
 
-Requirements
-------------
-
-    You need Tapenade >= 3.6 to generate the derivatives of the model functions.
-    Get it on http://www-sop.inria.fr/tropics/tapenade.html
+      - the model functions are differentiated using pyadolc
 
 
 Getting started

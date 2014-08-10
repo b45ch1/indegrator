@@ -1,18 +1,4 @@
-# Author: Sebastian F. Walter
-#         Manuel Kudruss
-
-import os
-import sys
 import numpy
-import json
-import datetime
-import tempfile
-import scipy.linalg
-from numpy.testing import assert_almost_equal
-
-from . backend_fortran import BackendFortran
-from . backend_pyadolc import BackendPyadolc
-
 
 class ExplicitEuler(object):
 
